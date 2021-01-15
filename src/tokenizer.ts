@@ -7,8 +7,26 @@ interface Token {
   }
 }
 
+const keywords = new Set(['select', 'from'])
+
 function isWhitespace(ch: string) {
   return [' ', '\n', '\t'].includes(ch)
+}
+
+function isNumber(ch: string) {
+  return /[0-9]/.test(ch)
+}
+
+function isIdentifierStart(ch: string) {
+  return /^[a-zA-Z_]$/.test(ch)
+}
+
+function isIdentifier(ch: string) {
+  return /[a-zA-Z_0-9\-]/.test(ch)
+}
+
+function isKeyword(ident: string) {
+  return keywords.has(ident.toLowerCase())
 }
 
 export default class Tokenizer {
@@ -37,6 +55,12 @@ export default class Tokenizer {
     if (ch === '"') {
       return this.handleString()
     }
+    if (isNumber(ch)) {
+      return this.handleNumber()
+    }
+    if (isIdentifierStart(ch)) {
+      return this.handleIdentifier()
+    }
     return null
   }
 
@@ -57,16 +81,48 @@ export default class Tokenizer {
         return {
           type: 'String',
           value: s,
-          pos: {
-            line: this.line,
-            col: this.col
-          }
+          pos: this.getPos()
         }
       }
       s += ch
       ch = this.next()
     }
     throw new Error("string doesn't terminate")
+  }
+
+  private handleNumber() {
+    let n = this.next()
+    let ch = this.peek()
+    while (ch && isNumber(ch)) {
+      n += this.next()
+      ch = this.peek()
+    }
+    return {
+      type: 'Number',
+      value: Number(n),
+      pos: this.getPos()
+    }
+  }
+
+  private handleIdentifier() {
+    let s = this.next()
+    let ch = this.peek()
+    while (ch && isIdentifier(ch)) {
+      s += this.next()
+      ch = this.peek()
+    }
+    return {
+      type: isKeyword(s) ? 'Keyword' : 'Identifier',
+      value: s,
+      pos: this.getPos()
+    }
+  }
+
+  private getPos() {
+    return {
+      line: this.line,
+      col: this.col
+    }
   }
 
   private next() {
