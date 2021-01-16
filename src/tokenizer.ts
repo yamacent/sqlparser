@@ -64,6 +64,16 @@ export default class Tokenizer {
     if (isIdentifierStart(ch)) {
       return this.handleIdentifier()
     }
+    if (['+', '-', '*', '/'].includes(ch)) {
+      const from = this.getPos()
+      this.next()
+      return {
+        type: 'Punc',
+        value: ch,
+        from,
+        to: this.getPos()
+      }
+    }
     return null
   }
 

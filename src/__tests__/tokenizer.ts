@@ -75,3 +75,22 @@ test('keyword', () => {
     }
   ])
 })
+
+test('punc', () => {
+  const code = `  *   `
+  const tokenizer = new Tokenizer(code)
+  expect(tokenizer.tokenize()).toStrictEqual([
+    {
+      type: 'Punc',
+      value: '*',
+      from: {
+        line: 1,
+        col: 2
+      },
+      to: {
+        line: 1,
+        col: 3
+      }
+    }
+  ])
+})
