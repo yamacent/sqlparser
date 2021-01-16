@@ -7,7 +7,11 @@ test('string', () => {
     {
       type: 'String',
       value: 'hoge',
-      pos: {
+      from: {
+        line: 1,
+        col: 2
+      },
+      to: {
         line: 1,
         col: 8
       }
@@ -22,7 +26,11 @@ test('number', () => {
     {
       type: 'Number',
       value: 123,
-      pos: {
+      from: {
+        line: 1,
+        col: 2
+      },
+      to: {
         line: 1,
         col: 5
       }
@@ -37,7 +45,11 @@ test('identifier', () => {
     {
       type: 'Identifier',
       value: 'foo_select',
-      pos: {
+      from: {
+        line: 1,
+        col: 2
+      },
+      to: {
         line: 1,
         col: 12
       }
@@ -52,7 +64,11 @@ test('keyword', () => {
     {
       type: 'Keyword',
       value: 'select',
-      pos: {
+      from: {
+        line: 1,
+        col: 2
+      },
+      to: {
         line: 1,
         col: 8
       }

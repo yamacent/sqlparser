@@ -1,10 +1,13 @@
+interface Position {
+  line: number
+  col: number
+}
+
 interface Token {
   type: string
   value: any
-  pos: {
-    line: number
-    col: number
-  }
+  from: Position
+  to: Position
 }
 
 const keywords = new Set(['select', 'from'])
@@ -73,6 +76,7 @@ export default class Tokenizer {
   }
 
   private handleString(): Token {
+    const from = this.getPos()
     let s = ''
     this.next()
     let ch = this.next()
@@ -81,7 +85,8 @@ export default class Tokenizer {
         return {
           type: 'String',
           value: s,
-          pos: this.getPos()
+          from,
+          to: this.getPos()
         }
       }
       s += ch
@@ -91,6 +96,7 @@ export default class Tokenizer {
   }
 
   private handleNumber() {
+    const from = this.getPos()
     let n = this.next()
     let ch = this.peek()
     while (ch && isNumber(ch)) {
@@ -100,11 +106,13 @@ export default class Tokenizer {
     return {
       type: 'Number',
       value: Number(n),
-      pos: this.getPos()
+      from,
+      to: this.getPos()
     }
   }
 
   private handleIdentifier() {
+    const from = this.getPos()
     let s = this.next()
     let ch = this.peek()
     while (ch && isIdentifier(ch)) {
@@ -114,11 +122,12 @@ export default class Tokenizer {
     return {
       type: isKeyword(s) ? 'Keyword' : 'Identifier',
       value: s,
-      pos: this.getPos()
+      from,
+      to: this.getPos()
     }
   }
 
-  private getPos() {
+  private getPos(): Position {
     return {
       line: this.line,
       col: this.col
