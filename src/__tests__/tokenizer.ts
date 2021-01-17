@@ -151,3 +151,83 @@ test('comma', () => {
     }
   ])
 })
+
+test('statement', () => {
+  const code = `select *
+from foo.bar`
+  const tokenizer = new Tokenizer(code)
+  expect(tokenizer.tokenize()).toStrictEqual([
+    {
+      type: 'Keyword',
+      value: 'select',
+      from: {
+        line: 1,
+        col: 0
+      },
+      to: {
+        line: 1,
+        col: 6
+      }
+    },
+    {
+      type: 'Operator',
+      value: '*',
+      from: {
+        line: 1,
+        col: 7
+      },
+      to: {
+        line: 1,
+        col: 8
+      }
+    },
+    {
+      type: 'Keyword',
+      value: 'from',
+      from: {
+        line: 2,
+        col: 0
+      },
+      to: {
+        line: 2,
+        col: 4
+      }
+    },
+    {
+      type: 'Identifier',
+      value: 'foo',
+      from: {
+        line: 2,
+        col: 5
+      },
+      to: {
+        line: 2,
+        col: 8
+      }
+    },
+    {
+      type: 'Period',
+      value: '.',
+      from: {
+        line: 2,
+        col: 8
+      },
+      to: {
+        line: 2,
+        col: 9
+      }
+    },
+    {
+      type: 'Identifier',
+      value: 'bar',
+      from: {
+        line: 2,
+        col: 9
+      },
+      to: {
+        line: 2,
+        col: 12
+      }
+    }
+  ])
+})

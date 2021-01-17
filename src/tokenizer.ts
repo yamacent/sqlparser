@@ -104,6 +104,16 @@ export default class Tokenizer {
         to: this.getPos()
       }
     }
+    if (ch === '.') {
+      const from = this.getPos()
+      this.next()
+      return {
+        type: 'Period',
+        value: ch,
+        from,
+        to: this.getPos()
+      }
+    }
     throw new Error('invalid character: ' + ch)
   }
 
