@@ -68,13 +68,43 @@ export default class Tokenizer {
       const from = this.getPos()
       this.next()
       return {
-        type: 'Punc',
+        type: 'Operator',
         value: ch,
         from,
         to: this.getPos()
       }
     }
-    return null
+    if (ch === '(') {
+      const from = this.getPos()
+      this.next()
+      return {
+        type: 'LParen',
+        value: ch,
+        from,
+        to: this.getPos()
+      }
+    }
+    if (ch === ')') {
+      const from = this.getPos()
+      this.next()
+      return {
+        type: 'RParen',
+        value: ch,
+        from,
+        to: this.getPos()
+      }
+    }
+    if (ch === ',') {
+      const from = this.getPos()
+      this.next()
+      return {
+        type: 'Comma',
+        value: ch,
+        from,
+        to: this.getPos()
+      }
+    }
+    throw new Error('invalid character: ' + ch)
   }
 
   private skipWhitespace() {

@@ -76,13 +76,70 @@ test('keyword', () => {
   ])
 })
 
-test('punc', () => {
+test('operator', () => {
   const code = `  *   `
   const tokenizer = new Tokenizer(code)
   expect(tokenizer.tokenize()).toStrictEqual([
     {
-      type: 'Punc',
+      type: 'Operator',
       value: '*',
+      from: {
+        line: 1,
+        col: 2
+      },
+      to: {
+        line: 1,
+        col: 3
+      }
+    }
+  ])
+})
+
+test('left paren', () => {
+  const code = `  (   `
+  const tokenizer = new Tokenizer(code)
+  expect(tokenizer.tokenize()).toStrictEqual([
+    {
+      type: 'LParen',
+      value: '(',
+      from: {
+        line: 1,
+        col: 2
+      },
+      to: {
+        line: 1,
+        col: 3
+      }
+    }
+  ])
+})
+
+test('right paren', () => {
+  const code = `  )   `
+  const tokenizer = new Tokenizer(code)
+  expect(tokenizer.tokenize()).toStrictEqual([
+    {
+      type: 'RParen',
+      value: ')',
+      from: {
+        line: 1,
+        col: 2
+      },
+      to: {
+        line: 1,
+        col: 3
+      }
+    }
+  ])
+})
+
+test('comma', () => {
+  const code = `  ,   `
+  const tokenizer = new Tokenizer(code)
+  expect(tokenizer.tokenize()).toStrictEqual([
+    {
+      type: 'Comma',
+      value: ',',
       from: {
         line: 1,
         col: 2
