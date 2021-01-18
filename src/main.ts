@@ -1,7 +1,7 @@
-import tokenize from './tokenizer'
+import Parser from './parser'
 
 const code = `
-  select * from foo.bar
+  select xxx.yyy, zzz from foo.bar
 `
 
-console.log(tokenize(code))
+new Parser(code).parse()

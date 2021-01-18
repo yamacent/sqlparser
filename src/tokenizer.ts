@@ -3,7 +3,7 @@ interface Position {
   col: number
 }
 
-interface Token {
+export interface Token {
   type: string
   value: any
   from: Position
