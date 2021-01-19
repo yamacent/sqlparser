@@ -1,7 +1,4 @@
-interface Position {
-  line: number
-  col: number
-}
+import { Position } from "./common"
 
 export interface Token {
   type: string

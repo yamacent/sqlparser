@@ -1,8 +1,20 @@
+import { Position } from "./common";
 import Tokenizer, { Token } from "./tokenizer";
 
-interface Query {
-  select: string[]
-  from: string[]
+interface Node {
+  type: string
+  from: Position
+  to: Position
+}
+
+interface Select extends Node {
+  type: 'select'
+  columns: string[]
+}
+
+interface From extends Node {
+  type: 'from'
+  tables: string[]
 }
 
 export default class Parser {
@@ -15,22 +27,30 @@ export default class Parser {
     this.tokens = tokenizer.tokenize()
   }
 
-  parse(): Query[] {
-    const queries: Query[] = []
+  parse(): Node[] {
+    const nodes: Node[] = []
     while (this.peek()) {
-      this.dispatch()
+      const node = this.dispatch()
+      if (node) {
+        nodes.push(node)
+      }
     }
-    return []
+    return nodes
   }
 
-  private dispatch() {
+  private dispatch(): Node | null {
     const token = this.peek()
     if (!token) {
-      return
+      return null
     }
     if (token.type === 'Keyword' && token.value === 'select') {
       const columns = this.handleSelect()
-      console.log(columns)
+      return {
+        type: 'select',
+        columns,
+        from: { line: 1, col: 0 },
+        to: { line: 1, col: 0 }
+      } as Select
     }
     throw new Error('unexpected token: ' + token.value)
   }
