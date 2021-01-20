@@ -14,3 +14,16 @@ test('select', () => {
     }
   ])
 })
+
+test('from', () => {
+  const code = ` from foo, bar.baz `
+  const parser = new Parser(code)
+  expect(parser.parse()).toStrictEqual([
+    {
+      type: 'from',
+      tables: ['foo', 'bar.baz'],
+      from: dummyPos,
+      to: dummyPos
+    }
+  ])
+})

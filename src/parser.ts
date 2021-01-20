@@ -52,6 +52,15 @@ export default class Parser {
         to: { line: 1, col: 0 }
       } as Select
     }
+    if (token.type === 'Keyword' && token.value === 'from') {
+      const tables = this.handleFrom()
+      return {
+        type: 'from',
+        tables,
+        from: { line: 1, col: 0 },
+        to: { line: 1, col: 0 }
+      } as From
+    }
     throw new Error('unexpected token: ' + token.value)
   }
 
@@ -79,9 +88,38 @@ export default class Parser {
     return columns
   }
 
+  private handleFrom() {
+    this.next()
+    const tables: string[] = []
+    let tmp: string[] = []
+    let token = this.peek()
+    while (token && !this.isFromEnd()) {
+      if (token.type === 'Identifier') {
+        tmp.push(token.value)
+      }
+      if (token.type === 'Period') {
+      }
+      if (token.type === 'Comma') {
+        tables.push(tmp.join('.'))
+        tmp = []
+      }
+      this.next()
+      token = this.peek()
+    }
+    if (tmp.length) {
+      tables.push(tmp.join('.'))
+    }
+    return tables
+  }
+
   private isSelectEnd() {
     const token = this.peek()
     return !token || token.type === 'Keyword' && token.value === 'from'
+  }
+
+  private isFromEnd() {
+    const token = this.peek()
+    return !token || token.type === 'Keyword' && token.value === 'where'
   }
 
   private next() {
