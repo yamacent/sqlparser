@@ -9,12 +9,17 @@ interface Node {
 
 interface Select extends Node {
   type: 'select'
-  columns: string[]
+  columns: QualifiedIdentifier[]
 }
 
 interface From extends Node {
   type: 'from'
   tables: string[]
+}
+
+interface QualifiedIdentifier extends Node {
+  type: 'QualifiedIdentifier'
+  identifiers: string[]
 }
 
 export default class Parser {
@@ -48,8 +53,8 @@ export default class Parser {
       return {
         type: 'select',
         columns,
-        from: { line: 1, col: 0 },
-        to: { line: 1, col: 0 }
+        from: token.from,
+        to: columns.length ? columns[columns.length - 1].to : token.to
       } as Select
     }
     if (token.type === 'Keyword' && token.value === 'from') {
@@ -66,24 +71,38 @@ export default class Parser {
 
   private handleSelect() {
     this.next()
-    const columns: string[] = []
-    let tmp: string[] = []
+    const columns: QualifiedIdentifier[] = []
+    let tmp: Token[] = []
     let token = this.peek()
+    let from: Position
+    let to: Position
     while (token && !this.isSelectEnd()) {
       if (token.type === 'Identifier') {
-        tmp.push(token.value)
+        tmp.push(token)
       }
       if (token.type === 'Period') {
       }
       if (token.type === 'Comma') {
-        columns.push(tmp.join('.'))
-        tmp = []
+        if (tmp.length) {
+          columns.push({
+            type: 'QualifiedIdentifier',
+            identifiers: tmp.map(token => token.value),
+            from: tmp[0].from,
+            to: tmp[tmp.length - 1].to
+          })
+          tmp = []
+        }
       }
       this.next()
       token = this.peek()
     }
     if (tmp.length) {
-      columns.push(tmp.join('.'))
+      columns.push({
+        type: 'QualifiedIdentifier',
+        identifiers: tmp.map(token => token.value),
+        from: tmp[0].from,
+        to: tmp[tmp.length - 1].to
+      })
     }
     return columns
   }
