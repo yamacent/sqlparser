@@ -14,7 +14,7 @@ interface Select extends Node {
 
 interface From extends Node {
   type: 'from'
-  tables: string[]
+  tables: QualifiedIdentifier[]
 }
 
 interface QualifiedIdentifier extends Node {
@@ -62,8 +62,8 @@ export default class Parser {
       return {
         type: 'from',
         tables,
-        from: { line: 1, col: 0 },
-        to: { line: 1, col: 0 }
+        from: token.from,
+        to: tables.length ? tables[tables.length - 1].to : token.to
       } as From
     }
     throw new Error('unexpected token: ' + token.value)
@@ -74,8 +74,6 @@ export default class Parser {
     const columns: QualifiedIdentifier[] = []
     let tmp: Token[] = []
     let token = this.peek()
-    let from: Position
-    let to: Position
     while (token && !this.isSelectEnd()) {
       if (token.type === 'Identifier') {
         tmp.push(token)
@@ -109,24 +107,34 @@ export default class Parser {
 
   private handleFrom() {
     this.next()
-    const tables: string[] = []
-    let tmp: string[] = []
+    const tables: QualifiedIdentifier[] = []
+    let tmp: Token[] = []
     let token = this.peek()
     while (token && !this.isFromEnd()) {
       if (token.type === 'Identifier') {
-        tmp.push(token.value)
+        tmp.push(token)
       }
       if (token.type === 'Period') {
       }
       if (token.type === 'Comma') {
-        tables.push(tmp.join('.'))
+        tables.push({
+          type: 'QualifiedIdentifier',
+          identifiers: tmp.map(token => token.value),
+          from: tmp[0].from,
+          to: tmp[tmp.length - 1].to
+        })
         tmp = []
       }
       this.next()
       token = this.peek()
     }
     if (tmp.length) {
-      tables.push(tmp.join('.'))
+      tables.push({
+        type: 'QualifiedIdentifier',
+        identifiers: tmp.map(token => token.value),
+        from: tmp[0].from,
+        to: tmp[tmp.length - 1].to
+      })
     }
     return tables
   }

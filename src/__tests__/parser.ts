@@ -39,9 +39,27 @@ test('from', () => {
   expect(parser.parse()).toStrictEqual([
     {
       type: 'from',
-      tables: ['foo', 'bar.baz'],
-      from: dummyPos,
-      to: dummyPos
+      tables: [
+        {
+          type: 'QualifiedIdentifier',
+          identifiers: [
+            'foo'
+          ],
+          from: { line: 1, col: 6 },
+          to: { line: 1, col: 9 },
+        },
+        {
+          type: 'QualifiedIdentifier',
+          identifiers: [
+            'bar',
+            'baz'
+          ],
+          from: { line: 1, col: 11 },
+          to: { line: 1, col: 18 },
+        },
+      ],
+      from: { line: 1, col: 1 },
+      to: { line: 1, col: 18 }
     }
   ])
 })
