@@ -22,6 +22,11 @@ interface QualifiedIdentifier extends Node {
   identifiers: string[]
 }
 
+interface Paren extends Node {
+  type: 'Paren',
+  nodes: Node[]
+}
+
 export default class Parser {
   tokens: Token[]
 
@@ -65,6 +70,15 @@ export default class Parser {
         from: token.from,
         to: tables.length ? tables[tables.length - 1].to : token.to
       } as From
+    }
+    if (token.type === 'LParen') {
+      const nodes = this.handleParen()
+      return {
+        type: 'Paren',
+        nodes,
+        from: dummyPos(),
+        to: dummyPos()
+      } as Paren
     }
     throw new Error('unexpected token: ' + token.value)
   }
@@ -139,6 +153,29 @@ export default class Parser {
     return tables
   }
 
+  private handleParen() {
+    this.next()
+    const nodes: Node[] = []
+    let token = this.peek()
+    while (token && token.type !== 'RParen') {
+      if (token.type === 'LParen') {
+        const sub = this.handleParen()
+        const paren: Paren = { type: 'Paren', nodes: sub, from: dummyPos(), to: dummyPos() }
+        nodes.push(paren)
+        token = this.peek()
+        continue
+      }
+
+      nodes.push(token)
+      this.next()
+      token = this.peek()
+    }
+    if (token && token.type === 'RParen') {
+      this.next()
+    }
+    return nodes
+  }
+
   private isSelectEnd() {
     const token = this.peek()
     return !token || token.type === 'Keyword' && token.value === 'from'
@@ -157,3 +194,5 @@ export default class Parser {
     return this.pos < this.tokens.length ? this.tokens[this.pos] : null
   }
 }
+
+const dummyPos = () => ({ line: 1, col: 0 })

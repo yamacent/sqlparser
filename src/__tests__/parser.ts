@@ -63,3 +63,10 @@ test('from', () => {
     }
   ])
 })
+
+test('paren', () => {
+  const code = ` (select foo from (select))  `
+  const parser = new Parser(code)
+  expect(parser.parse()).toStrictEqual([
+  ])
+})
