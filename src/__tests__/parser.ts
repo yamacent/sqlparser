@@ -68,5 +68,79 @@ test('paren', () => {
   const code = ` (select foo from (select))  `
   const parser = new Parser(code)
   expect(parser.parse()).toStrictEqual([
+    {
+      "type": "Paren",
+      "from": {
+        "col": 0,
+        "line": 1,
+      },
+      "to": {
+        "col": 0,
+        "line": 1,
+      },
+      "nodes": [
+        {
+          "type": "Keyword",
+          "value": "select",
+          "from": {
+            "col": 2,
+            "line": 1,
+          },
+          "to": {
+            "col": 8,
+            "line": 1,
+          }
+        },
+        {
+          "type": "Identifier",
+          "value": "foo",
+          "from": {
+            "col": 9,
+            "line": 1,
+          },
+          "to": {
+            "col": 12,
+            "line": 1,
+          }
+        },
+        {
+          "type": "Keyword",
+          "value": "from",
+          "from": {
+            "col": 13,
+            "line": 1,
+          },
+          "to": {
+            "col": 17,
+            "line": 1,
+          }
+        },
+        {
+          "type": "Paren",
+          "from": {
+            "col": 0,
+            "line": 1,
+          },
+          "to": {
+            "col": 0,
+            "line": 1,
+          },
+          "nodes": [
+            {
+              "type": "Keyword",
+              "value": "select",
+              "from": {
+                "col": 19,
+                "line": 1,
+              },
+              "to": {
+                "col": 25,
+                "line": 1,
+              },
+            },
+          ],
+        },
+      ]
+    }
   ])
 })
