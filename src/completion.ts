@@ -41,8 +41,132 @@ select | from emp
 select from |
 => emp, dept
 
+{
+  type: Prog,
+  pos,
+  nodes: [
+    {
+      type: Select,
+      pos,
+      nodes: []
+    },
+    {
+      type: From,
+      pos,
+      nodes: []
+    }
+  ]
+}
+
 select | from emp e join dept d on e.deptId = d.id
 => id, first, last, deptId, role, id, name
+
+{
+  type: Prog,
+  pos,
+  nodes: [
+    {
+      type: Select,
+      pos,
+      nodes: []
+    },
+    {
+      type: From,
+      pos,
+      nodes: {
+        type: Inner Join,
+        pos,
+        left: {
+          type: AliacedIdent,
+          pos,
+          ident: {
+            type: Ident,
+            pos,
+            val: emp
+          },
+          alias: e
+        },
+        right: {
+          type: AliacedIdent,
+          pos,
+          ident: {
+            type: Ident,
+            pos,
+            val: dept
+          },
+          alias: d
+        },
+        condition: {
+          type: Expression,
+          val: {
+            type: Comparison,
+            left: {
+              type: QualifiedIdent,
+              idents: [
+                {
+                  type: Ident,
+                  val: e
+                },
+                {
+                  type: Ident,
+                  val: deptId
+                }
+              ]
+            },
+            right: {
+              type: QualifiedIdent,
+              idents: [
+                {
+                  type: Ident,
+                  val: d
+                },
+                {
+                  type: Ident,
+                  val: id
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+
+select abs(1 + 2)
+
+{
+  type: Prog,
+  pos,
+  nodes: [
+    {
+      type: Select,
+      pos,
+      nodes: [
+        {
+          type: FunctionCall,
+          callee: {
+            type: Ident,
+            val: abs
+          },
+          params: [
+            {
+              type: +,
+              left: {
+                type: Number,
+                val: 1
+              },
+              right: {
+                type: Number,
+                val: 2
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 
 select d.| from emp e join dept d on e.deptId = d.id
 => id, name
