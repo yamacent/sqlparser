@@ -171,6 +171,89 @@ select abs(1 + 2)
 select d.| from emp e join dept d on e.deptId = d.id
 => id, name
 
+{
+  type: Prog,
+  pos,
+  nodes: [
+    {
+      type: Select,
+      pos,
+      nodes: [
+        {
+          type: QualifiedIdent,
+          idents: [
+            {
+              type: Ident,
+              val: d
+            },
+          ]
+        },
+      ]
+    },
+    {
+      type: From,
+      pos,
+      nodes: {
+        type: Inner Join,
+        pos,
+        left: {
+          type: AliacedIdent,
+          pos,
+          ident: {
+            type: Ident,
+            pos,
+            val: emp
+          },
+          alias: e
+        },
+        right: {
+          type: AliacedIdent,
+          pos,
+          ident: {
+            type: Ident,
+            pos,
+            val: dept
+          },
+          alias: d
+        },
+        condition: {
+          type: Expression,
+          val: {
+            type: Comparison,
+            left: {
+              type: QualifiedIdent,
+              idents: [
+                {
+                  type: Ident,
+                  val: e
+                },
+                {
+                  type: Ident,
+                  val: deptId
+                }
+              ]
+            },
+            right: {
+              type: QualifiedIdent,
+              idents: [
+                {
+                  type: Ident,
+                  val: d
+                },
+                {
+                  type: Ident,
+                  val: id
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+
+
 select | from (select 123 as foo, 456 as bar)
 => foo, bar
 
