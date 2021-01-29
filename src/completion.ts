@@ -77,9 +77,18 @@ select | from emp e join dept d on e.deptId = d.id
         type: Inner Join,
         pos,
         left: {
-          type: AliacedIdent,
+          type: AliacedValue,
           pos,
-          ident: {
+          val: {
+            type: Ident,
+            pos,
+            val: emp
+          },
+          alias: e
+          {
+          type: AliacedValue,
+          pos,
+          val: {
             type: Ident,
             pos,
             val: emp
@@ -87,9 +96,18 @@ select | from emp e join dept d on e.deptId = d.id
           alias: e
         },
         right: {
-          type: AliacedIdent,
+          type: AliacedValue,
           pos,
-          ident: {
+          val: {
+            type: Ident,
+            pos,
+            val: dept
+          },
+          alias: d
+          {
+          type: AliacedValue,
+          pos,
+          val: {
             type: Ident,
             pos,
             val: dept
@@ -197,9 +215,18 @@ select d.| from emp e join dept d on e.deptId = d.id
         type: Inner Join,
         pos,
         left: {
-          type: AliacedIdent,
+          type: AliacedValue,
           pos,
-          ident: {
+          val: {
+            type: Ident,
+            pos,
+            val: emp
+          },
+          alias: e
+          {
+          type: AliacedValue,
+          pos,
+          val: {
             type: Ident,
             pos,
             val: emp
@@ -207,9 +234,18 @@ select d.| from emp e join dept d on e.deptId = d.id
           alias: e
         },
         right: {
-          type: AliacedIdent,
+          type: AliacedValue,
           pos,
-          ident: {
+          val: {
+            type: Ident,
+            pos,
+            val: dept
+          },
+          alias: d
+          {
+          type: AliacedValue,
+          pos,
+          val: {
             type: Ident,
             pos,
             val: dept
@@ -253,9 +289,54 @@ select d.| from emp e join dept d on e.deptId = d.id
   ]
 }
 
-
 select | from (select 123 as foo, 456 as bar)
 => foo, bar
+
+{
+  type: Prog,
+  pos,
+  nodes: [
+    {
+      type: Select,
+      pos,
+      nodes: []
+    },
+    {
+      type: From,
+      pos,
+      sub: {
+        type: Prog,
+        pos
+        nodes: [
+          {
+            type: Select,
+            pos,
+            nodes: [
+              {
+                type: AliacedValue,
+                pos,
+                val: {
+                  type: Number,
+                  val: 123
+                },
+                alias: foo
+              },
+              {
+                type: AliacedValue,
+                pos,
+                val: {
+                  type: Number,
+                  val: 456
+                },
+                alias: bar
+              },
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
 
 select | from (select * from dept)
 => id, name
