@@ -341,6 +341,49 @@ select | from (select 123 as foo, 456 as bar)
 select | from (select * from dept)
 => id, name
 
+{
+  type: Prog,
+  pos,
+  nodes: [
+    {
+      type: Select,
+      pos,
+      nodes: []
+    },
+    {
+      type: From,
+      pos,
+      sub: {
+        type: Prog,
+        pos
+        nodes: [
+          {
+            type: Select,
+            pos,
+            nodes: [
+              {
+                type: Asterisk,
+                pos
+              }
+            ]
+          },
+          {
+            type: From,
+            pos,
+            nodes: [
+              {
+                type: Ident,
+                pos,
+                val: dept
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+
 select | from (select id from dept)
 => id
 
