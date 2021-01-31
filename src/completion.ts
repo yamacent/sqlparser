@@ -387,6 +387,50 @@ select | from (select * from dept)
 select | from (select id from dept)
 => id
 
+{
+  type: Prog,
+  pos,
+  nodes: [
+    {
+      type: Select,
+      pos,
+      nodes: []
+    },
+    {
+      type: From,
+      pos,
+      sub: {
+        type: Prog,
+        pos
+        nodes: [
+          {
+            type: Select,
+            pos,
+            nodes: [
+              {
+                type: Ident,
+                pos,
+                val: id
+              }
+            ]
+          },
+          {
+            type: From,
+            pos,
+            nodes: [
+              {
+                type: Ident,
+                pos,
+                val: dept
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+
 with w1 as (
   select * from |
 )
